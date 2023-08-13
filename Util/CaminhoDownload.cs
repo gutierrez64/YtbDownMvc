@@ -9,5 +9,6 @@ namespace Work.Util
     {
         public string VideoUrl { get; set; }
         public string DownloadDirectory { get; set; }
+
     }
 }
