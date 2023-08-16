@@ -32,3 +32,5 @@
 /home/gabriel/Desktop/Work/obj/Debug/net7.0/Work.pdb
 /home/gabriel/Desktop/Work/obj/Debug/net7.0/Work.genruntimeconfig.cache
 /home/gabriel/Desktop/Work/obj/Debug/net7.0/ref/Work.dll
+/home/gabriel/Desktop/Work/bin/Debug/net7.0/package-lock.json
+/home/gabriel/Desktop/Work/bin/Debug/net7.0/package.json

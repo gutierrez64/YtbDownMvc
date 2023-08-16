@@ -42,18 +42,18 @@ namespace Work.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Baixar(string videoUrl, CaminhoDownload request)
+        public async Task<IActionResult> BaixarVideo(string videoUrl, CaminhoDownload request)
         {
             try
             {
                 var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
                 var videoTitulo = videoInformacao.Title;
 
+                var diretorioDeSaida = "/home/gabriel/Desktop/videos";
+
                 if (request.DownloadDirectory == "BaixarVideo")
                 {
                     videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
-
-                    var diretorioDeSaida = "/home/gabriel/Desktop/videos";  
                     var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp4");
 
                     Directory.CreateDirectory(diretorioDeSaida);
@@ -72,7 +72,28 @@ namespace Work.Controllers
 
                     return PhysicalFile(diretorioSaida, "video/mp4", Path.GetFileName(diretorioSaida));
                 }
-                else if (request.DownloadDirectory == "BaixarAudio")
+                else
+                {
+                    throw new Exception("Ação inválida.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BaixarAudio(string videoUrl, CaminhoDownload request)
+        {
+            try
+            {
+                var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
+                var videoTitulo = videoInformacao.Title;
+
+                var diretorioDeSaida = "/home/gabriel/Desktop/videos";
+
+                if (request.DownloadDirectory == "BaixarAudio")
                 {
                     var caracteresInvalidos = Path.GetInvalidFileNameChars();
                     foreach (char c in caracteresInvalidos)
@@ -87,7 +108,6 @@ namespace Work.Controllers
                         videoTitulo = videoTitulo.Substring(0, limiteTamanhoTitulo);
                     }
 
-                    var diretorioDeSaida = "/home/gabriel/Desktop/videos";  
                     var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp3");
 
                     Directory.CreateDirectory(diretorioDeSaida);
@@ -116,6 +136,7 @@ namespace Work.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
 
     }
 }
