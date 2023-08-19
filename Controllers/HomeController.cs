@@ -46,7 +46,8 @@ namespace Work.Controllers
             {
                 var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
                 var videoTitulo = videoInformacao.Title;
-                var diretorioDeSaida = "/home/gabriel/Desktop/videos";
+                string diretorioDeSaida = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Downloads");
+
 
                 videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
                 var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp4");
@@ -80,7 +81,8 @@ namespace Work.Controllers
             {
                 var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
                 var videoTitulo = videoInformacao.Title;
-                var diretorioDeSaida = "/home/gabriel/Desktop/videos";
+                string diretorioDeSaida = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Downloads");
+
 
                 videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
                 var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp3");
