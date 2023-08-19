@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -48,34 +46,26 @@ namespace Work.Controllers
             {
                 var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
                 var videoTitulo = videoInformacao.Title;
-
                 var diretorioDeSaida = "/home/gabriel/Desktop/videos";
 
-                if (request.DownloadDirectory == "BaixarVideo")
+                videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
+                var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp4");
+
+                Directory.CreateDirectory(diretorioDeSaida);
+
+                var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
+                var infoFLuxo = informacaoUrl.GetMuxedStreams().GetWithHighestVideoQuality();
+
+                if (infoFLuxo != null)
                 {
-                    videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
-                    var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp4");
-
-                    Directory.CreateDirectory(diretorioDeSaida);
-
-                    var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
-                    var infoFLuxo = informacaoUrl.GetMuxedStreams().GetWithHighestVideoQuality();
-
-                    if (infoFLuxo != null)
-                    {
-                        await _youtube.Videos.Streams.DownloadAsync(infoFLuxo, diretorioSaida);
-                    }
-                    else
-                    {
-                        throw new Exception("Nenhuma stream de vídeo disponível.");
-                    }
-
-                    return PhysicalFile(diretorioSaida, "video/mp4", Path.GetFileName(diretorioSaida));
+                    await _youtube.Videos.Streams.DownloadAsync(infoFLuxo, diretorioSaida);
                 }
                 else
                 {
-                    throw new Exception("Ação inválida.");
+                    throw new Exception("Nenhuma stream de vídeo disponível.");
                 }
+
+                return PhysicalFile(diretorioSaida, "video/mp4", Path.GetFileName(diretorioSaida));
             }
             catch (Exception ex)
             {
@@ -90,53 +80,31 @@ namespace Work.Controllers
             {
                 var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
                 var videoTitulo = videoInformacao.Title;
-
                 var diretorioDeSaida = "/home/gabriel/Desktop/videos";
 
-                if (request.DownloadDirectory == "BaixarAudio")
+                videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
+                var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp3");
+
+                Directory.CreateDirectory(diretorioDeSaida);
+
+                var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
+                var infoFluxoAudio = informacaoUrl.GetAudioOnlyStreams().GetWithHighestBitrate();
+
+                if (infoFluxoAudio != null)
                 {
-                    var caracteresInvalidos = Path.GetInvalidFileNameChars();
-                    foreach (char c in caracteresInvalidos)
-                    {
-                        videoTitulo = videoTitulo.Replace(c, '_');
-                    }
-
-                    const int limiteTamanhoTitulo = 100;
-
-                    if (videoTitulo.Length > limiteTamanhoTitulo)
-                    {
-                        videoTitulo = videoTitulo.Substring(0, limiteTamanhoTitulo);
-                    }
-
-                    var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp3");
-
-                    Directory.CreateDirectory(diretorioDeSaida);
-
-                    var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
-                    var infoFluxoAudio = informacaoUrl.GetAudioOnlyStreams().GetWithHighestBitrate();
-
-                    if (infoFluxoAudio != null)
-                    {
-                        await _youtube.Videos.Streams.DownloadAsync(infoFluxoAudio, diretorioSaida);
-                    }
-                    else
-                    {
-                        throw new Exception("Nenhuma stream de áudio disponível.");
-                    }
-
-                    return PhysicalFile(diretorioSaida, "audio/mpeg", Path.GetFileName(diretorioSaida));
+                    await _youtube.Videos.Streams.DownloadAsync(infoFluxoAudio, diretorioSaida);
                 }
                 else
                 {
-                    throw new Exception("Ação inválida.");
+                    throw new Exception("Nenhuma stream de áudio disponível.");
                 }
+
+                return PhysicalFile(diretorioSaida, "audio/mpeg", Path.GetFileName(diretorioSaida));
             }
             catch (Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
-
     }
 }
