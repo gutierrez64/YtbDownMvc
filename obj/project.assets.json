@@ -148,24 +148,25 @@
     ]
   },
   "packageFolders": {
-    "/home/gabriel/.nuget/packages/": {}
+    "/home/codespace/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/gabriel/Desktop/Work/Work.csproj",
+      "projectUniqueName": "/workspaces/YtbDownMvc/Work.csproj",
       "projectName": "Work",
-      "projectPath": "/home/gabriel/Desktop/Work/Work.csproj",
-      "packagesPath": "/home/gabriel/.nuget/packages/",
-      "outputPath": "/home/gabriel/Desktop/Work/obj/",
+      "projectPath": "/workspaces/YtbDownMvc/Work.csproj",
+      "packagesPath": "/home/codespace/.nuget/packages/",
+      "outputPath": "/workspaces/YtbDownMvc/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/gabriel/.nuget/NuGet/NuGet.Config"
+        "/home/codespace/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "/usr/local/dotnet/7.0.306/sdk/7.0.306/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -208,7 +209,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.400/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/dotnet/7.0.306/sdk/7.0.306/RuntimeIdentifierGraph.json"
       }
     }
   }
