@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Work.Util
 {
+    // Não é mais utilizada essa classe.
     public class CaminhoDownload
     {
         public string VideoUrl { get; set; }

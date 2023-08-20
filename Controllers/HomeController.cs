@@ -40,7 +40,7 @@ namespace Work.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BaixarArquivo(string tipoMedia, string mediaUrl, CaminhoDownload request)
+        public async Task<IActionResult> BaixarArquivo(string tipoMedia, string mediaUrl)
         {
             try
             {
