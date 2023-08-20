@@ -77,18 +77,21 @@
 <body>
     <h1>Download de Vídeo ou Áudio</h1>
 
-    <form asp-action="BaixarAudio" method="post">
-        <label for="videoUrl">URL do Vídeo:</label>
-        <input type="url" name="videoUrl" required />
-
-        <label for="downloadDirectory">Diretório de Download:</label>
-        <select name="downloadDirectory">
-            <option value="BaixarVideo">Baixar Vídeo</option>
-            <option value="BaixarAudio">Baixar Áudio</option>
+    <form asp-action="BaixarArquivo" method="post">
+        <label for="tipoMedia">Tipo de Mídia:</label>
+        <select name="tipoMedia">
+            <option value="audio">Áudio</option>
+            <option value="video">Vídeo</option>
         </select>
+
+        <label for="mediaUrl">URL da Mídia:</label>
+        <input type="url" name="mediaUrl" required />
+
+       
 
         <button type="submit">Baixar</button>
     </form>
+
     <div class="ads">
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8797446406547401"
             crossorigin="anonymous"></script>

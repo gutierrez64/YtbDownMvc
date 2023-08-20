@@ -40,68 +40,43 @@ namespace Work.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BaixarVideo(string videoUrl, CaminhoDownload request)
+        public async Task<IActionResult> BaixarArquivo(string tipoMedia, string mediaUrl, CaminhoDownload request)
         {
             try
             {
-                var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
-                var videoTitulo = videoInformacao.Title;
+                var videoInformacao = await _youtube.Videos.GetAsync(mediaUrl);
+                var mediaTitulo = videoInformacao.Title;
                 string diretorioDeSaida = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Downloads");
 
-
-                videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
-                var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp4");
+                mediaTitulo = FormNome.FormatarNomeArquivo(mediaTitulo, 100);
+                string extensao = tipoMedia == "audio" ? "mp3" : "mp4";
+                var diretorioSaida = Path.Combine(diretorioDeSaida, $"{mediaTitulo}.{extensao}");
 
                 Directory.CreateDirectory(diretorioDeSaida);
 
-                var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
-                var infoFLuxo = informacaoUrl.GetMuxedStreams().GetWithHighestVideoQuality();
+                var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(mediaUrl);
+                IStreamInfo infoFluxo = null;
 
-                if (infoFLuxo != null)
+                if (tipoMedia == "audio")
                 {
-                    await _youtube.Videos.Streams.DownloadAsync(infoFLuxo, diretorioSaida);
+                    infoFluxo = informacaoUrl.GetAudioOnlyStreams().GetWithHighestBitrate();
+                }
+                else if (tipoMedia == "video")
+                {
+                    infoFluxo = informacaoUrl.GetMuxedStreams().GetWithHighestVideoQuality();
+                }
+
+                if (infoFluxo != null)
+                {
+                    await _youtube.Videos.Streams.DownloadAsync(infoFluxo, diretorioSaida);
                 }
                 else
                 {
-                    throw new Exception("Nenhuma stream de vídeo disponível.");
+                    throw new Exception(tipoMedia == "audio" ? "Nenhuma stream de áudio disponível." : "Nenhuma stream de vídeo disponível.");
                 }
 
-                return PhysicalFile(diretorioSaida, "video/mp4", Path.GetFileName(diretorioSaida));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> BaixarAudio(string videoUrl, CaminhoDownload request)
-        {
-            try
-            {
-                var videoInformacao = await _youtube.Videos.GetAsync(videoUrl);
-                var videoTitulo = videoInformacao.Title;
-                string diretorioDeSaida = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Downloads");
-
-
-                videoTitulo = FormNome.FormatarNomeArquivo(videoTitulo, 100);
-                var diretorioSaida = Path.Combine(diretorioDeSaida, $"{videoTitulo}.mp3");
-
-                Directory.CreateDirectory(diretorioDeSaida);
-
-                var informacaoUrl = await _youtube.Videos.Streams.GetManifestAsync(videoUrl);
-                var infoFluxoAudio = informacaoUrl.GetAudioOnlyStreams().GetWithHighestBitrate();
-
-                if (infoFluxoAudio != null)
-                {
-                    await _youtube.Videos.Streams.DownloadAsync(infoFluxoAudio, diretorioSaida);
-                }
-                else
-                {
-                    throw new Exception("Nenhuma stream de áudio disponível.");
-                }
-
-                return PhysicalFile(diretorioSaida, "audio/mpeg", Path.GetFileName(diretorioSaida));
+                string contentType = tipoMedia == "audio" ? "audio/mpeg" : "video/mp4";
+                return PhysicalFile(diretorioSaida, contentType, Path.GetFileName(diretorioSaida));
             }
             catch (Exception ex)
             {
